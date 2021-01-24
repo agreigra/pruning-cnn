@@ -1,8 +1,6 @@
 import torch
 from torch.autograd import Variable
 from torchvision import models
-import cv2
-import sys
 import numpy as np
 import torchvision
 import torch.nn as nn
@@ -10,11 +8,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 import dataset
 from prune import *
-import argparse
-from operator import itemgetter
-from heapq import nsmallest
 import time
-from ModifiedAlexNet import ModifiedAlexNet
+from heapq import nsmallest
+from operator import itemgetter
 
 class FilterPrunner:
     def __init__(self, model, device):
@@ -199,9 +195,10 @@ class PrunningFineTuner:
         message = str(100*float((number_of_filters - self.total_num_filters())) / number_of_filters) + "%"
         print("Filters prunned", str(message))
         acc = self.test()
-        print("Fine tuning to recover from prunning iteration.")
+        print("Accuracy after pruning:",acc)
+        print("Retrain to recover from prunning iteration.")
         optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
-        self.train(optimizer, epoches = 5)
+        self.train(optimizer, epoches = 3)
         return acc
         
     def get_number_of_parameters(self):
